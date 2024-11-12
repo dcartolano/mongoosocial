@@ -14,8 +14,6 @@ interface IThought extends Document {
     reactions: Schema.Types.ObjectId[]
 }
 
-
-
 const reactionSchema = new Schema<IReaction>(
     {
         reactionId: {
@@ -71,7 +69,6 @@ const thoughtSchema = new Schema<IThought>({
         timestamps: true
     }
 );
-
 
 
 const Thought = model('Thought', thoughtSchema);
