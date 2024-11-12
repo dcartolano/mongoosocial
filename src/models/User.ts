@@ -1,5 +1,6 @@
-import { Schema, Types, model, type Document } from 'mongoose';
-import Thought from './Thought';
+// import { Schema, Types, model, type Document } from 'mongoose';
+import { Schema, model, type Document } from 'mongoose';
+// import Thought from './Thought';
 
 interface IUser extends Document {
     username: string,
@@ -22,7 +23,14 @@ const userSchema = new Schema<IUser>({
         // Must match a valid email address (look into Mongoose's matching validation)
         max_length: 50, // is this trimmed? if so, not needed here?
     },
-    thoughts: [Thought], // mdoel or schema?
+    thoughts: 
+    // [Thought], // mdoel or schema?
+    [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'student',
+        },
+    ],
     // friends: [userSchema], //  how to self reference before defined??
     // how to add in a virtual? Create a virtual called friendCount that retrieves the length of the user's friends array field on query.
 },
