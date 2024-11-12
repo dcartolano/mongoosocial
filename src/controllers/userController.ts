@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import { ObjectId } from 'mongodb'; // need this?
-import { User, Thought } from '../models/index.js'; // may not need thought
+// import { ObjectId } from 'mongodb'; // need this?
+// import { User, Thought } from '../models/index.js'; // may not need thought
+import { User } from '../models/index.js'; // may not need thought
 
 /**
  * GET All Users /users
@@ -79,10 +80,10 @@ export const updateUser = async (req: Request, res: Response) => {
         const user = await User.findOneAndUpdate({ _id: req.params.userId });
 
         if (!user) {
-            return res.status(404).json({ message: 'No such user exists' });
+            res.status(404).json({ message: 'No such user exists' });
         }
 
-        return res.json({ user });
+        res.json({ user });
     } catch (error: any) {
         res.status(500).json({
             message: error.message
