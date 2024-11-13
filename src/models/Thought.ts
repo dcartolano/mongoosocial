@@ -28,12 +28,12 @@ const reactionSchema = new Schema<IReaction>(
         username: {
             type: String,
             required: true,
-            max_length: 50, // doesn't specify, do I need it?
+            max_length: 50,
         },
         createdAt: {
             type: Date,
             default: () => new Date(),
-            // Use a getter method to format the timestamp on query
+            // Use a getter method to format the timestamp on query (?)
         },
     },
     {
@@ -52,24 +52,29 @@ const thoughtSchema = new Schema<IThought>({
     createdAt: {
         type: Date,
         default: () => new Date(),
-        // Use a getter method to format the timestamp on query
+        // Use a getter method to format the timestamp on query (?)
     },
     username: {
         type: String,
         required: true,
-        max_length: 50, // doesn't specify, do I need it?
+        max_length: 50,
     },
-    reactions: [reactionSchema], // model or schema?
-    // how to add in a virtual? Create a virtual called reactionCount that retrieves the length of the thought's reactions array field on query.
+    reactions: [reactionSchema],
 },
     {
         toJSON: {
             getters: true,
         },
-        timestamps: true
+        id: false,
     }
 );
 
+thoughtSchema
+  .virtual('reactionCount')
+  // Getter
+  .get(function (this: IThought) {
+    return this.reactions.length;
+  });
 
 const Thought = model('Thought', thoughtSchema);
 
