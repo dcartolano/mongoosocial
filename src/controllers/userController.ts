@@ -13,7 +13,6 @@ export const getAllUsers = async (_req: Request, res: Response) => {
 
         const usersObj = {
             users,
-            // headCount: await headCount(),
         }
 
         res.json(usersObj);
@@ -50,7 +49,6 @@ export const getUserById = async (req: Request, res: Response) => {
     }
 }
 
-// need to adjust this to have this format (?):
 // {
 //     "username": "lernantino",
 //     "email": "lernantino@gmail.com"
@@ -132,12 +130,11 @@ export const deleteUser = async (req: Request, res: Response) => {
 */
 export const addFriend = async (req: Request, res: Response) => {
     console.log('You are adding a friend');
-    console.log(req.body);
     try {
         const user = await User.findOneAndUpdate(
             { _id: req.params.userId },
-            { $addToSet: { friends: req.body } },
-            { runValidators: true, new: true }
+            { $addToSet: { friends: req.params.friendId } },
+            // { runValidators: true, new: true } // prolly don't need
         );
 
         if (!user) {
@@ -153,7 +150,7 @@ export const addFriend = async (req: Request, res: Response) => {
 }
 
 /**
- * DELETE Friend from a user's friend list based on /users/:userId/friends/:friendId
+ * PUT Friend from a user's friend list based on /users/:userId/friends/:friendId
  * @param string friendId
  * @param string userId
  * @returns object user 
@@ -162,8 +159,8 @@ export const removeFriend = async (req: Request, res: Response) => {
     try {
         const user = await User.findOneAndUpdate(
             { _id: req.params.userId },
-            { $pull: { friends: { friendId: req.params.friendId } } },
-            { runValidators: true, new: true }
+            { $pull: { friends: req.params.friendId } },
+            // { runValidators: true, new: true }
         );
 
         if (!user) {
