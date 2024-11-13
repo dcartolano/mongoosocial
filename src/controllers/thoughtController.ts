@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-// import { Thought, User } from '../models/index.js';
-import { Thought } from '../models/index.js';
+import { Thought, User } from '../models/index.js';
+// import { Thought } from '../models/index.js';
 
 /**
  * GET All Thoughts /thoughts
@@ -40,7 +40,6 @@ export const getThoughtById = async (req: Request, res: Response) => {
   }
 };
 
-// needs to match the below? or nah?
 //   {
 //     "thoughtText": "Here's a cool thought...",
 //     "username": "lernantino",
@@ -52,11 +51,14 @@ export const getThoughtById = async (req: Request, res: Response) => {
 * @returns a single Thought object
 */
 export const createThought = async (req: Request, res: Response) => {
-  const { thought } = req.body;
+  const { thoughtText, username, userId } = req.body;
   try {
     const newThought = await Thought.create({
-      thought
+      thoughtText, username
     });
+    await User.findByIdAndUpdate(
+      userId, {$push: {thoughts: newThought._id}}
+    )
     res.status(201).json(newThought);
   } catch (error: any) {
     res.status(400).json({
@@ -90,7 +92,7 @@ export const updateThought = async (req: Request, res: Response) => {
   }
 };
 
-// do reactions also need to be deleted?
+// do reactions also need to be deleted? or will it happen automatically?
 /**
 * DELETE Thought based on id /thoughts/:thoughtId
 * @param string thoughtsId
