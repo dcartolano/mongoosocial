@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { Thought, User } from '../models/index.js';
-// import { Thought } from '../models/index.js';
 
 /**
  * GET All Thoughts /thoughts
@@ -57,7 +56,7 @@ export const createThought = async (req: Request, res: Response) => {
       thoughtText, username
     });
     await User.findByIdAndUpdate(
-      userId, {$push: {thoughts: newThought._id}}
+      userId, { $push: { thoughts: newThought._id } }
     )
     res.status(201).json(newThought);
   } catch (error: any) {
@@ -77,7 +76,7 @@ export const updateThought = async (req: Request, res: Response) => {
     const thought = await Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
       { $set: req.body },
-      { runValidators: true, new: true }
+      // { runValidators: true, new: true }
     );
 
     if (!thought) {
@@ -92,7 +91,6 @@ export const updateThought = async (req: Request, res: Response) => {
   }
 };
 
-// do reactions also need to be deleted? or will it happen automatically?
 /**
 * DELETE Thought based on id /thoughts/:thoughtId
 * @param string thoughtsId
@@ -106,17 +104,21 @@ export const deleteThought = async (req: Request, res: Response) => {
       res.status(404).json({
         message: 'No thought with that ID'
       });
-    } 
+    }
     // not sure that I need this, or if it would even work
     // else {
     //   await Reaction.deleteMany({ _id: { $in: thought.reaction } });
     //   res.json({ message: 'Thought and reactions deleted!' });
     // }
-
-  } catch (error: any) {
-    res.status(500).json({
-      message: error.message
-    });
+    return res.json({ message: 'Thought successfully deleted' });
+    // } catch (error: any) {
+    //   res.status(500).json({
+    //     message: error.message
+    //   });
+    // }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
   }
 };
 
@@ -128,23 +130,24 @@ export const deleteThought = async (req: Request, res: Response) => {
 */
 export const addReaction = async (req: Request, res: Response) => {
   console.log('You are adding a reaction');
-  console.log(req.body);
+  // console.log(req.body);
+  // const { reactionBody, username } = req.body;
   try {
-      const thought = await Thought.findOneAndUpdate(
-          { _id: req.params.thoughtId },
-          { $addToSet: { reaction: req.body } },
-          { runValidators: true, new: true }
-      );
+    const thought = await Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $push: { reactions: req.body } },
+      // { runValidators: true, new: true }
+    );
 
-      if (!thought) {
-          return res
-              .status(404)
-              .json({ message: 'No thought found with that ID :(' });
-      }
+    if (!thought) {
+      return res
+        .status(404)
+        .json({ message: 'No thought found with that ID :(' });
+    }
 
-      return res.json(thought);
+    return res.json(thought);
   } catch (err) {
-      return res.status(500).json(err);
+    return res.status(500).json(err);
   }
 }
 
@@ -156,20 +159,20 @@ export const addReaction = async (req: Request, res: Response) => {
 */
 export const removeReaction = async (req: Request, res: Response) => {
   try {
-      const thought = await Thought.findOneAndUpdate(
-          { _id: req.params.thoughtId },
-          { $pull: { reaction: { reactionId: req.params.reactionId } } },
-          { runValidators: true, new: true }
-      );
+    const thought = await Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $pull: { reactions: req.params.reactionId } },
+      // { runValidators: true, new: true }
+    );
 
-      if (!thought) {
-          return res
-              .status(404)
-              .json({ message: 'No thought found with that ID :(' });
-      }
+    if (!thought) {
+      return res
+        .status(404)
+        .json({ message: 'No thought found with that ID :(' });
+    }
 
-      return res.json(thought);
+    return res.json(thought);
   } catch (err) {
-      return res.status(500).json(err);
+    return res.status(500).json(err);
   }
 }
