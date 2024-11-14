@@ -1,15 +1,16 @@
 import { Schema, Types, model, type Document } from 'mongoose';
+import { dateFormat } from '../utils/dateFormatter.js';
 
 interface IReaction extends Document {
     reactionId: Schema.Types.ObjectId,
     reactionBody: string,
     username: string,
-    createdAt: Date,
+    createdAt: Schema.Types.Date, // mongoose type, used instead of date since we're now returning a string
 }
 
 interface IThought extends Document {
     thoughtText: string,
-    createdAt: Date,
+    createdAt: Schema.Types.Date, // mongoose type, used instead of date since we're now returning a string
     username: string,
     reactions: Schema.Types.ObjectId[]
 }
@@ -32,12 +33,14 @@ const reactionSchema = new Schema<IReaction>(
         },
         createdAt: {
             type: Date,
-            default: () => new Date(),
+            default: Date.now, // parens not needed?
+            // get: 
             // Use a getter method to format the timestamp on query (?)
+            get: (timeStamp: any) => dateFormat(timeStamp),
         },
     },
     {
-        timestamps: true,
+        // timestamps: true,
         _id: false
     }
 );
@@ -53,6 +56,10 @@ const thoughtSchema = new Schema<IThought>({
         type: Date,
         default: () => new Date(),
         // Use a getter method to format the timestamp on query (?)
+        get: (timeStamp: any) => {
+            return dateFormat(timeStamp)
+        }
+        
     },
     username: {
         type: String,
