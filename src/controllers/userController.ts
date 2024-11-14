@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
-// import { ObjectId } from 'mongodb'; // need this?
-// import { User, Thought } from '../models/index.js'; // may not need thought
-import { User } from '../models/index.js'; // may not need thought
+import { User } from '../models/index.js'; 
 
 /**
  * GET All Users /users
@@ -15,7 +13,8 @@ export const getAllUsers = async (_req: Request, res: Response) => {
             users,
         }
 
-        res.json(usersObj);
+        res.json({ message: `Showing all users!`, usersObj});
+
     } catch (error: any) {
         res.status(500).json({
             message: error.message
@@ -24,24 +23,26 @@ export const getAllUsers = async (_req: Request, res: Response) => {
 }
 
 /**
- * GET User based on id /users/:userId
+ * GET Single User based on id /users/:userId
  * @param string userId
  * @returns a single User object
 */
 export const getUserById = async (req: Request, res: Response) => {
-    const { userId } = req.params;
+    // const { userId } = req.params;
     try {
-        const user = await User.findById(userId);
+        const user = await User.findOne({_id: req.params.userId});
+
         if (user) {
             res.json({
+                message: `User Found!`,
                 user,
-                // grade: await grade(studentId)
             });
         } else {
             res.status(404).json({
                 message: 'User not found'
             });
         }
+
     } catch (error: any) {
         res.status(500).json({
             message: error.message
@@ -61,13 +62,17 @@ export const getUserById = async (req: Request, res: Response) => {
 export const createUser = async (req: Request, res: Response) => {
     try {
         const user = await User.create(req.body);
-        res.json(user);
+
+        res.json( { message: `User created!`, user });
+
     } catch (err) {
         res.status(500).json(err);
     }
 }
 
-// NOT complete, need to finish
+// {
+//     "username": "amiko2020"
+// }
 /**
  * PUT User /users/:userId
  * @param object userId
@@ -75,13 +80,17 @@ export const createUser = async (req: Request, res: Response) => {
 */
 export const updateUser = async (req: Request, res: Response) => {
     try {
-        const user = await User.findOneAndUpdate({ _id: req.params.userId });
+        const user = await User.findOneAndUpdate(
+            {_id: req.params.userId}, 
+            { $set: req.body }, 
+            {new: true}
+        );
 
         if (!user) {
             res.status(404).json({ message: 'No such user exists' });
         }
 
-        res.json({ user });
+        res.json({ message: `User updated!`, user});
     } catch (error: any) {
         res.status(500).json({
             message: error.message
@@ -90,32 +99,21 @@ export const updateUser = async (req: Request, res: Response) => {
 }
 
 /**
- * DELETE Student based on id /users/:userId
+ * DELETE User /users/:userId
  * @param string userId
  * @returns string 
 */
 export const deleteUser = async (req: Request, res: Response) => {
     try {
-        const user = await User.findOneAndDelete({ _id: req.params.userId });
+        const user = await User.findOneAndDelete(
+            { _id: req.params.userId }
+        );
 
         if (!user) {
             return res.status(404).json({ message: 'No such user exists' });
         }
 
-        // // not sure if this ish is gonna work yet
-        // const thought = await User.findOneAndUpdate(
-        //     { users: req.params.userId },
-        //     { $pull: { users: req.params.userId } },
-        //     { new: true }
-        // );
-
-        // if (!thought) {
-        //     return res.status(404).json({
-        //         message: 'User deleted, but no thoughts found',
-        //     });
-        // }
-
-        return res.json({ message: 'User successfully deleted' });
+        return res.json({ message: `User ${req.params.userId} deleted!` });
     } catch (err) {
         console.log(err);
         return res.status(500).json(err);
@@ -123,7 +121,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 }
 
 /**
- * POST new Friend to a user's friend list based on /users/:userId/friends/:friendId
+ * POST new Friend to a user's friend list /users/:userId/friends/:friendId
  * @param string userId
  * @param object friendId
  * @returns object user 
@@ -134,7 +132,7 @@ export const addFriend = async (req: Request, res: Response) => {
         const user = await User.findOneAndUpdate(
             { _id: req.params.userId },
             { $addToSet: { friends: req.params.friendId } },
-            // { runValidators: true, new: true } // prolly don't need
+            { new: true } 
         );
 
         if (!user) {
@@ -143,14 +141,14 @@ export const addFriend = async (req: Request, res: Response) => {
                 .json({ message: 'No user found with that ID :(' });
         }
 
-        return res.json(user);
+        return res.json({ message: `Friend ${req.params.friendId} added!`, user });
     } catch (err) {
         return res.status(500).json(err);
     }
 }
 
 /**
- * PUT Friend from a user's friend list based on /users/:userId/friends/:friendId
+ * DELETE Friend from a user's friend list /users/:userId/friends/:friendId
  * @param string friendId
  * @param string userId
  * @returns object user 
@@ -160,7 +158,7 @@ export const removeFriend = async (req: Request, res: Response) => {
         const user = await User.findOneAndUpdate(
             { _id: req.params.userId },
             { $pull: { friends: req.params.friendId } },
-            // { runValidators: true, new: true }
+            { new: true }
         );
 
         if (!user) {
@@ -169,7 +167,7 @@ export const removeFriend = async (req: Request, res: Response) => {
                 .json({ message: 'No user found with that ID :(' });
         }
 
-        return res.json(user);
+        return res.json({ message: `Friend ${req.params.friendId} removed!`, user });
     } catch (err) {
         return res.status(500).json(err);
     }
