@@ -13,15 +13,15 @@ const userSchema = new Schema<IUser>({
         type: String,
         unique: true,
         required: true,
-        max_length: 50, // not needed?
+        max_length: 50,
         trim: true,
     },
     email: {
         type: String,
         required: true,
         unique: true,
-        // Must match a valid email address (look into Mongoose's matching validation)
-        max_length: 50, // not needed?
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email address'],
+        max_length: 50,
     },
     thoughts: 
     [
