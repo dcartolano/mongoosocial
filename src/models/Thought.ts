@@ -5,14 +5,15 @@ interface IReaction extends Document {
     reactionId: Schema.Types.ObjectId,
     reactionBody: string,
     username: string,
-    createdAt: Schema.Types.Date, // mongoose type, used instead of date since we're now returning a string
+    createdAt: Schema.Types.Date,
 }
 
 interface IThought extends Document {
     thoughtText: string,
-    createdAt: Schema.Types.Date, // mongoose type, used instead of date since we're now returning a string
+    createdAt: Schema.Types.Date,
     username: string,
-    reactions: Schema.Types.ObjectId[]
+    // reactions: Schema.Types.ObjectId[]
+    reactions: [typeof reactionSchema]
 }
 
 const reactionSchema = new Schema<IReaction>(
@@ -32,16 +33,16 @@ const reactionSchema = new Schema<IReaction>(
             max_length: 50,
         },
         createdAt: {
-            type: Date,
-            default: Date.now, // parens not needed?
-            // get: 
-            // Use a getter method to format the timestamp on query (?)
-            get: (timeStamp: any) => dateFormat(timeStamp),
+            type: Schema.Types.Date,
+            default: Date.now,
+            get: (timeStamp: any) => dateFormat(timeStamp)
         },
     },
     {
-        // timestamps: true,
-        _id: false
+        toJSON: {
+            getters: true,
+        },
+        id: false
     }
 );
 
@@ -54,12 +55,8 @@ const thoughtSchema = new Schema<IThought>({
     },
     createdAt: {
         type: Date,
-        default: () => new Date(),
-        // Use a getter method to format the timestamp on query (?)
-        get: (timeStamp: any) => {
-            return dateFormat(timeStamp)
-        }
-        
+        default: Date.now,
+        get: (timeStamp: any) => dateFormat(timeStamp)
     },
     username: {
         type: String,
@@ -71,17 +68,18 @@ const thoughtSchema = new Schema<IThought>({
     {
         toJSON: {
             getters: true,
+            virtuals: true,
         },
+        timestamps: true,
         id: false,
     }
 );
 
 thoughtSchema
-  .virtual('reactionCount')
-  // Getter
-  .get(function (this: IThought) {
-    return this.reactions.length;
-  });
+    .virtual('reactionCount')
+    .get(function (this: IThought) {
+        return this.reactions.length;
+    });
 
 const Thought = model('Thought', thoughtSchema);
 
