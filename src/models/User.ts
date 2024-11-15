@@ -1,4 +1,3 @@
-// import { Schema, Types, model, type Document } from 'mongoose';
 import { Schema, model, type Document } from 'mongoose';
 
 interface IUser extends Document {
@@ -40,7 +39,7 @@ const userSchema = new Schema<IUser>({
 },
     {
         toJSON: {
-            getters: true, // not necessarily needed?
+            // getters: true,
             virtuals: true, 
         },
         id: false,
