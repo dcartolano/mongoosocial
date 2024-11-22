@@ -1,5 +1,5 @@
 import { Schema, Types, model, type Document } from 'mongoose';
-import { dateFormat } from '../utils/dateFormatter.js';
+// import { dateFormat } from '../utils/dateFormatter.js';
 
 interface IReaction extends Document {
     reactionId: Schema.Types.ObjectId,
@@ -35,7 +35,7 @@ const reactionSchema = new Schema<IReaction>(
         createdAt: {
             type: Schema.Types.Date,
             default: Date.now,
-            get: (timeStamp: any) => dateFormat(timeStamp)
+            // get: (timeStamp: any) => dateFormat(timeStamp)
         },
     },
     {
@@ -56,7 +56,7 @@ const thoughtSchema = new Schema<IThought>({
     createdAt: {
         type: Date,
         default: Date.now,
-        get: (timeStamp: any) => dateFormat(timeStamp)
+        // get: (timeStamp: any) => dateFormat(timeStamp)
     },
     username: {
         type: String,
