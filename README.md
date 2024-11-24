@@ -2,12 +2,9 @@
 
 ## Description
 
-Provide a short description explaining the what, why, and how of your project. Use the following questions as a guide:
+The goal of this app was to create a social network simulation that utilizes CRUD operations that can be viewed and tested using a program like Insomnia. Users can be created, updated, deleted, and assigned to other users's friends lists. Thoughts can also be created/deleted and connected to a specific user, as well as reactions that can be tied to a specific thought.
 
-- What was your motivation?
-- Why did you build this project? (Note: the answer is not "Because it was a homework assignment.")
-- What problem does it solve?
-- What did you learn?
+This app uses MongoDB for the database, and gave me practice with seeding a database, using routes to access the database, and creating and implementing models.
 
 ## Table of Contents
 
@@ -18,25 +15,25 @@ Provide a short description explaining the what, why, and how of your project. U
 
 ## Installation
 
-What are the steps required to install your project? Provide a step-by-step description of how to get the development environment running.
+Copy the SSH Key from the [GitHub Repository](https://github.com/dcartolano/mongoosocial) and perform a git clone into a local directory of your choice. Open in VS Code or similar program. In the integrated terminal, run `npm i` to download all relevant node modules. 
+
+To be able to seed the database, you will need to use a program like MongoD Compass and have it open. Run the command `npm run seed` to create the database and seed the users.  
 
 ## Usage
 
+To start the program, run the command `npm run start` to both run the build command and also to start the server. 
+
+[Click here](https://drive.google.com/file/d/19NNYONu5Ut268N6ujCeKbgo5C45SiWFe/view) to view a demo video of using the app in Insomnia.
+
+Use the routes as noted in `src/routes/api/thoughtRoutes.ts` and `src/routes/api/userRoutes.ts`, and all information about body/params formatting and get/push/put/delete specifications can be found in `src/controllers/thoughtController.ts` and `src/controllers/userController.ts`.
+
 Provide instructions and examples for use. Include screenshots as needed.
-
-To add a screenshot, create an `assets/images` folder in your repository and upload your screenshot to it. Then, using the relative filepath, add it to your README using the following syntax:
-
-    ```md
-    ![alt text](assets/images/screenshot.png)
-    ```
 
 ## Credits
 
-List your collaborators, if any, with links to their GitHub profiles.
+Thanks to EdX and Northwestern for the starter code and the opportunity to practice these skills. 
 
-If you used any third-party assets that require attribution, list the creators with links to their primary web presence in this section.
-
-If you followed tutorials, include links to those here as well.
+Thanks also to my instructor and the EdX tutors for all the help and clarifications along the way.
 
 ## License
 
